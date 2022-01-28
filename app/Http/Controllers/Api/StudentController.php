@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers\Api;
 
-use Laravel\Lumen\Routing\Controller as BaseController;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Vinkla\Recaptcha\Recaptcha;
-use App\Models\Cn2\Student;
-use App\Models\Cn2\StudentLog;
-use App\Repositories\StudentRepository;
 use DB;
 use Carbon\Carbon;
+use ReCaptcha\ReCaptcha;
+use App\Models\Cn2\Student;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use App\Models\Cn2\StudentLog;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use App\Repositories\StudentRepository;
+use Exception;
+use Laravel\Lumen\Routing\Controller as BaseController;
 
 class StudentController extends BaseController
 {
@@ -99,6 +100,18 @@ class StudentController extends BaseController
     }
 
 
+    public function checkRecaptcha()
+    {
+        $recaptcha = new ReCaptcha(env('RECAPTCHA_SECRET_KEY'));
+        $resp      = $recaptcha->setExpectedHostname($_SERVER['HTTP_HOST'])->verify($_POST["g-recaptcha-response"], $_SERVER['REMOTE_ADDR']);
+        if ($resp->isSuccess()) {
+            // code for processing your form goes here
+        } else {
+            // code for showing an error message goes here
+            $errors = $resp->getErrorCodes();
+        }
+    }
+
     public function signUp(Request $req)
     {
 
@@ -112,20 +125,16 @@ class StudentController extends BaseController
         ]);
 
         //recaptcha
-
         if (!empty($_POST['g-recaptcha-response'])) {
-
-            try {
-                $recaptcha = new Recaptcha(env('RECAPTCHA_SECRET_KEY'));
-                $recaptcha->verify($_POST['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);
-            } catch (RecaptchaException $e) {
-                // If the verification fails.
+            $recaptcha = new ReCaptcha(env('RECAPTCHA_SECRET_KEY'));
+            $resp      = $recaptcha->setExpectedHostname($_SERVER['HTTP_HOST'])->verify($_POST["g-recaptcha-response"], $_SERVER['REMOTE_ADDR']);
+            if (!$resp->isSuccess()) {
                 return response()->json(['status' => 'error', 'message' => 'recaptcha not valid'], 422);
+                $errors = $resp->getErrorCodes();
             }
         } else {
             return response()->json(['status' => 'error', 'message' => 'recaptcha not valid'], 422);
         }
-
 
         $user = Student::where('email', $req->input('email'))->orWhere('id_number', $req->input('id_number'))->first();
 
