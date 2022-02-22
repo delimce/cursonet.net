@@ -91,7 +91,9 @@
                 <li>
                   <div class="post-reply">
                     <span class="subtext">Respuesta el {{$reply->date()}}</span><br>
-                    <span class="subtext">Por. </span>&nbsp;<span>{{$reply->person->fullname()}}</span><br>
+                    <span class="subtext">Por. </span>&nbsp;<span>
+                      {{ $reply->person ? $reply->person->fullname(): '' }}
+                      </span><br>
                     <span class="subtext">Contenido:</span>&nbsp;<span>{{$reply->content}}</span><br>
                   </div>
                 </li>
