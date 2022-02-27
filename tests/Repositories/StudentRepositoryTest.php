@@ -4,6 +4,7 @@ namespace Tests\Repositories;
 
 use Tests\TestCase;
 use App\Repositories\StudentRepository;
+use App\Services\AccountService;
 
 class StudentRepositoryTest extends TestCase
 {
@@ -14,6 +15,7 @@ class StudentRepositoryTest extends TestCase
     {
         parent::setUp();
         $this->studentRepository = new StudentRepository();
+        $this->accountService = $this->app->make('App\Services\AccountService');
     }
 
     /**
@@ -64,11 +66,11 @@ class StudentRepositoryTest extends TestCase
     public function testGetUserContacts()
     {
         $fakeId = 0;
-        $result = $this->studentRepository->getUserContacts($fakeId);
+        $result = $this->accountService->getUserContacts($fakeId);
         $this->assertFalse($result);
 
         $userId = 476;
-        $result = $this->studentRepository->getUserContacts($userId);
+        $result = $this->accountService->getUserContacts($userId);
         $this->assertIsArray($result);
 
         if (count($result) > 0) {

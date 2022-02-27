@@ -13,21 +13,23 @@ use Laravel\Lumen\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Repositories\StudentRepository;
+use App\Services\AccountService;
 use Validator;
 
 class AccountController extends BaseController
 {
     private $student;
-    private $studentRepository;
 
     /**
      * Create a new controller instance.
      * @return void
      */
-    public function __construct(Request $req, StudentRepository $repository)
-    {
+    public function __construct(
+        Request $req,
+        private StudentRepository $studentRepository,
+        private AccountService $accountService
+    ) {
         $token = $req->header('Authorization');
-        $this->studentRepository = $repository;
         $this->student = $this->studentRepository->getUserByToken($token);
     }
 
@@ -38,7 +40,7 @@ class AccountController extends BaseController
     public function getContacts()
     {
         $estId = $this->student->id;
-        $contacts = $this->studentRepository->getUserContacts($estId);
+        $contacts = $this->accountService->getUserContacts($estId);
         if (!$contacts) {
             $error = __('students.user.notfound');
             return response()->json(['status' => 'error', 'message' => $error], 400);

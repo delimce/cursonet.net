@@ -186,7 +186,7 @@ class StudentRepository
 
     /**
      * getUserContacts
-     *
+     * @deprecated
      * @param  int $studentId
      * @return array|bool
      */
@@ -202,14 +202,22 @@ class StudentRepository
         $groups = $est->groups()->with('group')->get();
         $teacher_array = [];
         $group_array = [];
-        $groups->each(function ($value) use (&$group_array, &$teacher_array) {
-            $group_array[] = $value->grupo_id;
-            $tempAdmins = $value->group->course->admins()->get();
-            // obtaining admin ids of student courses
-            $tempAdmins->pluck('admin_id')->each(function ($adminId) use (&$teacher_array) {
-                $teacher_array[] = $adminId;
+
+
+        # has groups almost 1
+        if ($groups->count()) {
+            $groups->each(function ($value) use (&$group_array, &$teacher_array) {
+                $group_array[] = $value->grupo_id;
+                $tempAdmins = $value->group->course->admins()->get();
+                // obtaining admin ids of student courses
+                $tempAdmins->pluck('admin_id')->each(function ($adminId) use (&$teacher_array) {
+                    $teacher_array[] = $adminId;
+                });
             });
-        });
+        } else {
+            dd("fail");
+        }
+       
 
         $students = GroupStudent::with(['Student' => function ($q) use ($studentId) {
             // Query the name field in status table
