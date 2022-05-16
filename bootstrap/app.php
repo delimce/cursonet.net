@@ -69,6 +69,7 @@ $app->configure('database');
 $app->configure('session');
 $app->configure('filesystems');
 $app->configure('logging');
+$app->configure('cors');
 
 
 /*
@@ -85,6 +86,7 @@ $app->configure('logging');
 $app->middleware([
     \Illuminate\Session\Middleware\StartSession::class,
     \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+    \Fruitcake\Cors\HandleCors::class,
 ]);
 
 $app->bind(\Illuminate\Session\SessionManager::class, function () use ($app) {
@@ -110,6 +112,7 @@ $app->withFacades(true, [
 $app->register(App\Providers\AppServiceProvider::class);
 $app->register(App\Providers\AuthServiceProvider::class);
 $app->register(\Illuminate\Session\SessionServiceProvider::class);
+$app->register(Fruitcake\Cors\CorsServiceProvider::class);
 
 $app->routeMiddleware([
     'auth' => App\Http\Middleware\Authenticate::class,
