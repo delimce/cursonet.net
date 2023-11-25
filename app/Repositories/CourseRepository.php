@@ -52,7 +52,7 @@ class CourseRepository
             "nombre" => $course->nombre,
             "init" => $course->createdAt(),
             "group" =>  $estGroup->group->nombre,
-            "author" => $course->author(),
+            "professor" => $course->author->fullName(),
             "duracion" => $course->duracion,
             "wall" => $wallMessages,
             "ntopics" => $ntopics,

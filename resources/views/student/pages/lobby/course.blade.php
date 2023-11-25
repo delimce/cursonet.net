@@ -28,7 +28,7 @@
         </div>
         <div>
             <span class="subtext">@lang('commons.teacher')</span>
-            <span id="course_professor"><a href="#">Luis De Lima</a></span>
+            <span id="course_professor"></span>
         </div>
     </div>
 

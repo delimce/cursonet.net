@@ -75,6 +75,7 @@ const loadCourseInformation = function (courseId) {
                 $("#course_description").html(detail.descripcion);
                 $("#course_initdate").html(detail.init);
                 $("#course_ntopics").html(detail.ntopics);
+                $("#course_professor").html(detail.professor);
                 if (detail.ntopics > 0) {
                     $("#course_button").show();
                 } else {
