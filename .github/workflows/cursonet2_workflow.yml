@@ -16,7 +16,7 @@ jobs:
           key:  ${{secrets.CURSONET_SERVER_SECRET}}
           port: 22
           script: |
-            cd /var/www/html/cursonet/
+            cd /var/www/html/cursonet/student/
             git checkout .
             git pull origin master
             composer install
